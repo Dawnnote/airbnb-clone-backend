@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Room, Amenity
 
 @admin.register(Room)
-class RommAdmin(admin.ModelAdmin):
+class RoomAdmin(admin.ModelAdmin):
     
     list_display = (
         "name",
