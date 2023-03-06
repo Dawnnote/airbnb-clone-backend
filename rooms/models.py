@@ -25,7 +25,8 @@ class Room(CommonModel):
     amenities = models.ManyToManyField("rooms.Amenity")
     
     def __str__(self):
-        return self.
+        return self.name
+
 
 class Amenity(CommonModel):
 
