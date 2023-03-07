@@ -2,9 +2,7 @@ from django.contrib import admin
 from .models import Review
 
 class WordFilter(admin.SimpleListFilter):
-
     title = "Filter by words!"
-
     parameter_name = "word"
 
     def lookups(self, request, model_admin):
@@ -20,6 +18,7 @@ class WordFilter(admin.SimpleListFilter):
             return reviews.filter(payload__contains=word)
         else:
             reviews
+
 
 class ReviewScore(admin.SimpleListFilter):
     title = "Filter by Score"
@@ -40,7 +39,6 @@ class ReviewScore(admin.SimpleListFilter):
         else:
             reviews
         
-
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
