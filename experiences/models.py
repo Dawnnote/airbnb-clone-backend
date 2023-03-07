@@ -9,7 +9,7 @@ class Experience(CommonModel):
     name = models.CharField(max_length=250)
     host = models.ForeignKey(
         "users.User", 
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
         related_name="experiences",
     )
     price = models.PositiveIntegerField()

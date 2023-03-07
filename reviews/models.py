@@ -23,7 +23,7 @@ class Review(CommonModel):
         "experiences.Experience",
         null = True,
         blank = True,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
         related_name="reviews",
     )
     
