@@ -1,4 +1,5 @@
 from rest_framework.views import APIView
+from django.db import transaction
 from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound, NotAuthenticated, ParseError
@@ -52,26 +53,34 @@ class Rooms(APIView):
         all_rooms = Room.objects.all()
         serializer = RoomListSerializer(all_rooms, many=True)
         return Response(serializer.data)
-    
+
     def post(self, request):
         if request.user.is_authenticated:
             serializer = RoomDetailSerializer(data=request.data)
             if serializer.is_valid():
                 category_pk = request.data.get("category")
                 if not category_pk:
-                    raise ParseError
+                    raise ParseError("Category is required.")
                 try:
                     category = Category.objects.get(pk=category_pk)
                     if category.kind == Category.CategoryKindChoices.EXPERIENCES:
-                        raise ParseError
+                        raise ParseError("The category kind should be 'rooms'")
                 except Category.DoesNotExist:
-                    raise ParseError
-                room = serializer.save(
-                    owner=request.user, 
-                    category=category,
-                )
-                serializer = RoomDetailSerializer(room)
-                return Response(serializer.data)
+                    raise ParseError("Category not found")
+                try:
+                    with transaction.atomic():
+                        room = serializer.save(
+                            owner=request.user,
+                            category=category,
+                        )
+                        amenities = request.data.get("amenities")
+                        for amenity_pk in amenities:
+                            amenity = Amenity.objects.get(pk=amenity_pk)
+                            room.amenities.add(amenity)
+                        serializer = RoomDetailSerializer(room)
+                        return Response(serializer.data)
+                except Exception:
+                    raise ParseError("Amenity not found")
             else:
                 return Response(serializer.errors)
         else:
