@@ -1,5 +1,6 @@
 from django.db import models
 from common.models import CommonModel
+from django.core.validators import MinValueValidator
 
 class Room(CommonModel):
 
@@ -13,9 +14,9 @@ class Room(CommonModel):
     name = models.CharField(max_length=180, default="")
     country = models.CharField(max_length=50, default="한국")
     city = models.CharField(max_length=80, default="서울")
-    price = models.PositiveIntegerField()
-    rooms = models.PositiveIntegerField(null=True)
-    toilets = models.PositiveIntegerField()
+    price = models.PositiveIntegerField(validators=[MinValueValidator(0)])
+    rooms = models.PositiveIntegerField(validators=[MinValueValidator(0)] ,null=True)
+    toilets = models.PositiveIntegerField(validators=[MinValueValidator(0)])
     description = models.TextField()
     address = models.CharField(max_length=250)
     pet_friendly = models.BooleanField(default=True)
@@ -48,7 +49,7 @@ class Room(CommonModel):
     def rating(self):
         count = self.reviews.count()
         if count == 0:
-            return "No Reviews"
+            return 0
         else:
             total_rating = 0
             for review in self.reviews.all().values("rating"):
