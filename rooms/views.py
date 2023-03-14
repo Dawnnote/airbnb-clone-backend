@@ -52,7 +52,11 @@ class AmenityDetail(APIView):
 class Rooms(APIView):
     def get(self, request):
         all_rooms = Room.objects.all()
-        serializer = RoomListSerializer(all_rooms, many=True)
+        serializer = RoomListSerializer(
+            all_rooms, 
+            many=True,
+            context={"request":request},
+        )
         return Response(serializer.data)
 
     def post(self, request):
